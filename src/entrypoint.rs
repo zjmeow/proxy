@@ -1,4 +1,4 @@
-use crate::{instruction, jup_swap};
+use crate::instruction;
 use crate::processor::jup_swap;
 use borsh::BorshDeserialize;
 use pinocchio::account_info::AccountInfo;
@@ -20,8 +20,8 @@ pub fn process_instruction(
         0 => {
             let jup_payload = instruction::JupPayload::try_from_slice(&payload)
                 .or(Err(ProgramError::InvalidArgument))?;
-            return jup_swap(accounts, jup_payload);
+            jup_swap(accounts, jup_payload)
         }
-        _ => return Err(ProgramError::Custom(10001)),
-    };
+        _ => Err(ProgramError::Custom(10001)),
+    }
 }
