@@ -10,7 +10,23 @@ crate-type = ["cdylib", "lib"]
 borsh = { version = "1.5.5", features = ["derive"] }
 pinocchio = "0.9.2"
 pinocchio-log = "0.5.1"
+pinocchio-pubkey = "0.3.0"
 
+pinocchio-token = "0.4.0"
+
+[dev-dependencies]
+solana-sdk = "2.2.1"
+mollusk-svm = "0.4.0"
+mollusk-svm-bencher = "0.4.0"
+
+[features]
+no-entrypoint = []
+std = []
+test-default = ["no-entrypoint", "std"]
+bench-default = ["no-entrypoint", "std"]
+
+[[test]]
+name = "unit_tests"
 
 [package.metadata.solana]
 build-target = "sbf"
