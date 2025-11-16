@@ -5,34 +5,26 @@ use crate::util::{invoke_dynamic_unchecked, to_account_metas};
 use pinocchio::account_info::AccountInfo;
 use pinocchio::instruction::Instruction;
 use pinocchio::ProgramResult;
-use pinocchio_log::log;
 
 pub fn process(
     jup_account: &[AccountInfo],
     pool_accounts: &[AccountInfo],
-    jup_data: &[u8],
     pool_data: &[u8],
+    jup_data: &[u8],
     mint_a: &AccountInfo,
     mint_b: &AccountInfo,
 ) -> ProgramResult {
     let before_start = util::reload_amount(mint_a)?;
     let before_mid = util::reload_amount(mint_b)?;
-    log!("before_start {}", before_start);
-    log!("before_mid {}", before_mid);
     // 换xsol
     let swap_instruction = Instruction {
         program_id: &HYLO,
         accounts: &*to_account_metas(pool_accounts),
         data: &pool_data,
     };
-    log!("pool start {}", pool_accounts[0].key());
-    log!("pool start 1 {}", pool_accounts[1].key());
-    log!("pool length  {}", pool_accounts.len());
     invoke_dynamic_unchecked(&swap_instruction, pool_accounts)?;
     let after_mid = util::reload_amount(mint_b)?;
-    log!("after_mid {}", after_mid);
     let input = after_mid - before_mid;
-    log!("input {}", input);
     let new_jup_data = util::replace_u64_at(jup_data, -19, input)?;
     let jup_instruction = Instruction {
         program_id: &JUPITER_PROGRAM_ID,
@@ -42,7 +34,7 @@ pub fn process(
     invoke_dynamic_unchecked(&jup_instruction, jup_account)?;
     let after_start = util::reload_amount(mint_a)?;
     if after_start < before_start {
-        return Err(MyProgramError::NoProfit.into());
+        return Err(MyProgramError::PdaMismatch.into());
     }
     Ok(())
 }

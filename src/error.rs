@@ -1,7 +1,7 @@
 use pinocchio::program_error::ProgramError;
 #[derive(Clone, PartialEq)]
 pub enum MyProgramError {
-    WriteOverflow,
+    NoProfit,
     InvalidInstructionData,
     PdaMismatch,
     InvalidOwner,
