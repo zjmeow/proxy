@@ -24,10 +24,7 @@ pub fn process_instruction(
             let remaining_accounts = &accounts[2..];
             let (jup_accounts, pool_accounts) =
                 remaining_accounts.split_at(jup_account_length as usize);
-            log!("jup_data {}", jup_data);
-            log!("pool_data {}", pool_data);
-            log!("jup account {}", jup_accounts.len());
-            log!("pool account {}", pool_accounts.len());
+
             pool_jup::process(
                 jup_accounts,
                 pool_accounts,
@@ -45,6 +42,10 @@ pub fn process_instruction(
             let remaining_accounts = &accounts[2..];
             let (jup_accounts, pool_accounts) =
                 remaining_accounts.split_at(jup_account_length as usize);
+            log!("jup_data {}", jup_data);
+            log!("pool_data {}", pool_data);
+            log!("jup account {}", jup_accounts.len());
+            log!("pool account {}", pool_accounts.len());
             jup_pool::process(
                 jup_accounts,
                 pool_accounts,
