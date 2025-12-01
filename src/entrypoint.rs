@@ -5,6 +5,7 @@ use pinocchio::program_error::ProgramError;
 use pinocchio::pubkey::Pubkey;
 use pinocchio::{entrypoint, ProgramResult};
 use pinocchio_log::log;
+use crate::error::MyProgramError::PdaMismatch;
 
 entrypoint!(process_instruction);
 pub fn process_instruction(
@@ -36,16 +37,20 @@ pub fn process_instruction(
             Ok(())
         }
         1 => {
-            let (jup_account_length, jup_data, pool_data) = parse_pool_to_jup_data(payload)?;
+            let (&pool_amount_index, remain) = payload
+                .split_first()
+                .ok_or(ProgramError::InvalidInstructionData)?;
+            // log!("pool_amount_index {}", pool_amount_index);
+            let (jup_account_length, jup_data, pool_data) = parse_pool_to_jup_data(remain)?;
             let mint_a = &accounts[0];
             let mint_b = &accounts[1];
             let remaining_accounts = &accounts[2..];
             let (jup_accounts, pool_accounts) =
                 remaining_accounts.split_at(jup_account_length as usize);
-            log!("jup_data {}", jup_data);
-            log!("pool_data {}", pool_data);
-            log!("jup account {}", jup_accounts.len());
-            log!("pool account {}", pool_accounts.len());
+            // log!("jup_data {}", jup_data);
+            // log!("pool_data {}", pool_data);
+            // log!("jup account {}", jup_accounts.len());
+            // log!("pool account {}", pool_accounts.len());
             jup_pool::process(
                 jup_accounts,
                 pool_accounts,
@@ -53,6 +58,7 @@ pub fn process_instruction(
                 pool_data,
                 mint_a,
                 mint_b,
+                pool_amount_index as usize
             )?;
             Ok(())
         }
@@ -81,7 +87,7 @@ fn  parse_pool_to_jup_data(payload: &[u8]) -> Result<(u32, &[u8], &[u8]), Progra
 
     let (jup_data, pool_data) = rest
         .split_at_checked(jup_data_length)
-        .ok_or(ProgramError::InvalidInstructionData)?;
+        .ok_or(PdaMismatch)?;
 
     Ok((jup_account_length, jup_data, pool_data))
 }
