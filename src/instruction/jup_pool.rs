@@ -15,6 +15,7 @@ pub fn process(
     mint_a: &AccountInfo,
     mint_b: &AccountInfo,
     index: usize,
+    to_program: &AccountInfo,
 ) -> ProgramResult {
     let before_start = util::reload_amount(mint_a)?;
     let before_mid = util::reload_amount(mint_b)?;
@@ -33,7 +34,7 @@ pub fn process(
 
     let new_pool_data = util::replace_u64_at(pool_data, index as isize, input)?;
     let swap_instruction = Instruction {
-        program_id: &HYLO,
+        program_id: to_program.key(),
         accounts: &*to_account_metas(pool_accounts),
         data: &new_pool_data,
     };

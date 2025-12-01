@@ -22,7 +22,8 @@ pub fn process_instruction(
             let (jup_account_length, jup_data, pool_data) = parse_pool_to_jup_data(payload)?;
             let mint_a = &accounts[0];
             let mint_b = &accounts[1];
-            let remaining_accounts = &accounts[2..];
+            let to_program = &accounts[2];
+            let remaining_accounts = &accounts[3..];
             let (jup_accounts, pool_accounts) =
                 remaining_accounts.split_at(jup_account_length as usize);
 
@@ -33,6 +34,7 @@ pub fn process_instruction(
                 pool_data,
                 mint_a,
                 mint_b,
+                to_program,
             )?;
             Ok(())
         }
@@ -44,7 +46,8 @@ pub fn process_instruction(
             let (jup_account_length, jup_data, pool_data) = parse_pool_to_jup_data(remain)?;
             let mint_a = &accounts[0];
             let mint_b = &accounts[1];
-            let remaining_accounts = &accounts[2..];
+            let to_program = &accounts[2];
+            let remaining_accounts = &accounts[3..];
             let (jup_accounts, pool_accounts) =
                 remaining_accounts.split_at(jup_account_length as usize);
             // log!("jup_data {}", jup_data);
@@ -58,7 +61,8 @@ pub fn process_instruction(
                 pool_data,
                 mint_a,
                 mint_b,
-                pool_amount_index as usize
+                pool_amount_index as usize,
+                to_program,
             )?;
             Ok(())
         }

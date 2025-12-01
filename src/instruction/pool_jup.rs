@@ -14,12 +14,13 @@ pub fn process(
     pool_data: &[u8],
     mint_a: &AccountInfo,
     mint_b: &AccountInfo,
+    to_program: &AccountInfo,
 ) -> ProgramResult {
     let before_start = util::reload_amount(mint_a)?;
     let before_mid = util::reload_amount(mint_b)?;
     // 换xsol
     let swap_instruction = Instruction {
-        program_id: &HYLO,
+        program_id: to_program.key(),
         accounts: &*to_account_metas(pool_accounts),
         data: &pool_data,
     };
