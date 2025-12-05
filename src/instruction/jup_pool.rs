@@ -1,5 +1,5 @@
 use crate::error::MyProgramError;
-use crate::programs::{HYLO, JUPITER_PROGRAM_ID};
+use crate::programs::JUPITER_PROGRAM_ID;
 use crate::util;
 use crate::util::{invoke_dynamic_unchecked, to_account_metas};
 use pinocchio::account_info::AccountInfo;
@@ -16,6 +16,7 @@ pub fn process(
     mint_b: &AccountInfo,
     index: usize,
     to_program: &AccountInfo,
+    singer: AccountInfo,
 ) -> ProgramResult {
     let before_start = util::reload_amount(mint_a)?;
     let before_mid = util::reload_amount(mint_b)?;
